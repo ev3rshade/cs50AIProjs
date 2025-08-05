@@ -55,7 +55,7 @@ def load_data(directory):
 def main():
     if len(sys.argv) > 2:
         sys.exit("Usage: python degrees.py [directory]")
-    directory = sys.argv[1] if len(sys.argv) == 2 else "large"
+    directory = sys.argv[1] if len(sys.argv) == 2 else "small"
 
     # Load data from files into memory
     print("Loading data...")
@@ -92,8 +92,33 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
-    # TODO
-    raise NotImplementedError
+    """current algo is too slow :(   """
+    # Node((movieID, personID), parent Node id, visited?)
+    frontier = StackFrontier()
+    frontier.add(Node(source, None, None))
+
+    # Explored - use set for constant lookup
+    explored = set()
+
+    while not frontier.empty():
+        currNode = frontier.remove()
+        explored.add(currNode.state)
+
+        for movie, person in neighbors_for_person(currNode.state):
+            if not frontier.contains_state(person) and person not in explored:
+                newNode = Node(person, currNode, (movie, person))
+                frontier.add(newNode)
+
+        if currNode.state == target:
+            path = []
+            while currNode.state != source:
+                path.append(currNode.action)
+                currNode = currNode.parent
+            path.reverse()
+            return path
+    return None
+
+    
 
 
 def person_id_for_name(name):
